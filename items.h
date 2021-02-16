@@ -5,8 +5,11 @@ private:
     int levelReq;
 public:
     Item(const char*,const int, const int);
+    char* getName() const;
     int getPrice() const;
     int getLevelReq() const;
+    bool operator == (Item* t1){return getName() == t1->getName();};
+    bool operator != (Item* t1){return !operator==(t1);};
     virtual int use() =0;
     ~Item();
 };
@@ -19,6 +22,7 @@ private:
     HandType type;
 public:
     Weapon(const char*,const int, const int,const int, HandType);
+    HandType getType() const;
     int use(); //Active Use
     ~Weapon();
 };
@@ -32,7 +36,7 @@ public:
     ~Armor();
 };
 
-enum PotionType {EXP,ATTACK,DEFENSE,HEALING,MANA};
+enum PotionType {EXP,HEALING,MANA,ATTACK,DEFENSE};
 
 class Potion: public Item{
 private:
@@ -41,6 +45,7 @@ private:
     bool available;
 public:
     Potion(const char*,const int, const int, PotionType, const int);
+    PotionType getType() const;
     int use(); //Active Use
     ~Potion();
 };

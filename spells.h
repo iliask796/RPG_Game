@@ -1,3 +1,5 @@
+enum SpellType {Weaken,Vulnerable,Hex};
+
 class Spell{
 private:
     char* name;
@@ -8,22 +10,23 @@ private:
     int maxDamage;
 public:
     Spell(const char*, const int, const int, const int, const int, const int);
+    char *getName() const;
     int getPrice() const;
     int getLevelReq() const;
     int getManaReq() const;
     int cast();
-    virtual int debuff() = 0;
+    bool operator == (Spell* s1){return getName() == s1->getName();};
+    bool operator != (Spell* s1){return !operator==(s1);};
+    virtual SpellType debuff() = 0;
     ~Spell();
 };
-
-enum SpellType {Weaken,Vulnerable,Hex};
 
 class IceSpell : public Spell{
 private:
     SpellType effect;
 public:
     IceSpell(const char*, const int, const int, const int, const int, const int);
-    int debuff();
+    SpellType debuff();
     ~IceSpell();
 };
 
@@ -32,7 +35,7 @@ private:
     SpellType effect;
 public:
     FireSpell(const char*, const int, const int, const int, const int, const int);
-    int debuff();
+    SpellType debuff();
     ~FireSpell();
 };
 
@@ -41,6 +44,6 @@ private:
     SpellType effect;
 public:
     LightningSpell(const char*, const int, const int, const int, const int, const int);
-    int debuff();
+    SpellType debuff();
     ~LightningSpell();
 };

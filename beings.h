@@ -1,6 +1,8 @@
+#include <list>
 #include "items.h"
 #include "spells.h"
 #include "utility.h"
+using namespace std;
 
 class Living{
 private:
@@ -25,21 +27,26 @@ private:
     int agility;
     int money;
     int experience;
-    List<Item> inventory;
-    List<Item> gear;
-    List<Spell> spellbook;
+    list<Item*>* inventory;
+    list<Spell*>* spellbook;
+    Item** gear;
+
 public:
     Hero(const char*, const int, const int, const int, const int, const int, const int=1000);
     int attack();
     void addToInventory(Item*);
     void removeFromInventory(Item*);
     void printInventory();
-    void addGear(Item*);
-    void removeGear(Item*);
-    void printGear();
     void addToSpellbook(Spell*);
     void removeFromSpellbook(Spell*);
     void printSpellbook();
+    void equipWeapon(Weapon*);
+    void equipArmor(Armor*);
+    void removeWeapon();
+    void removeArmor();
+    void swapWeapon();
+    void swapArmor();
+    void printGear();
     virtual void levelUp() =0;
     ~Hero();
 };

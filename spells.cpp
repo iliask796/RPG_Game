@@ -11,6 +11,10 @@ Spell::Spell(const char * nam, const int val, const int lvl, const int mp, const
     maxDamage = max;
 }
 
+char *Spell::getName() const {
+    return name;
+}
+
 int Spell::getPrice() const {
     return price;
 }
@@ -35,8 +39,8 @@ IceSpell::IceSpell(const char * nam, const int val, const int lvl, const int mp,
     effect = Weaken;
 }
 
-int IceSpell::debuff() {
-    return 0;
+SpellType IceSpell::debuff() {
+    return effect;
 }
 
 IceSpell::~IceSpell() {
@@ -47,8 +51,8 @@ FireSpell::FireSpell(const char * nam, const int val, const int lvl, const int m
     effect = Vulnerable;
 }
 
-int FireSpell::debuff() {
-    return 0;
+SpellType FireSpell::debuff() {
+    return effect;
 }
 
 FireSpell::~FireSpell() {
@@ -59,8 +63,8 @@ LightningSpell::LightningSpell(const char * nam, const int val, const int lvl, c
     effect = Hex;
 }
 
-int LightningSpell::debuff() {
-    return 0;
+SpellType LightningSpell::debuff() {
+    return effect;
 }
 
 LightningSpell::~LightningSpell() {

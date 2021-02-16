@@ -8,6 +8,10 @@ Item::Item(const char* nam, const int val, const int req) {
     levelReq = req;
 }
 
+char *Item::getName() const {
+    return name;
+}
+
 int Item::getPrice() const {
     return price;
 }
@@ -25,24 +29,28 @@ Weapon::Weapon(const char* nam,const int val, const int req,const int dmg, HandT
     type = typ;
 }
 
-Weapon::~Weapon() {
-
+HandType Weapon::getType() const {
+    return type;
 }
 
 int Weapon::use() {
     return damage;
 }
 
+Weapon::~Weapon() {
+
+}
+
 Armor::Armor(const char* nam,const int val, const int req,const int def) : Item(nam,val,req) {
     defense = def;
 }
 
-Armor::~Armor() {
-
-}
-
 int Armor::use() {
     return defense;
+}
+
+Armor::~Armor() {
+
 }
 
 Potion::Potion(const char* nam,const int val, const int req, PotionType tp, const int st) : Item(nam,val,req) {
@@ -51,10 +59,14 @@ Potion::Potion(const char* nam,const int val, const int req, PotionType tp, cons
     available = true;
 }
 
-Potion::~Potion() {
-
+PotionType Potion::getType() const {
+    return type;
 }
 
 int Potion::use() {
     return stat;
+}
+
+Potion::~Potion() {
+
 }
