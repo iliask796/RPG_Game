@@ -173,10 +173,18 @@ void Hero::printGear() {
 }
 
 Hero::~Hero() {
+    for(auto& pItem: *inventory){
+        delete pItem;
+    }
     inventory->clear();
     delete inventory;
+    for(auto& pSpell: *spellbook){
+        delete pSpell;
+    }
     spellbook->clear();
     delete spellbook;
+    for (int i=0;i<2;i++){delete gear[i];}
+    delete[] gear;
 }
 
 Monster::Monster(const char * nam, const int hp, const int dmg, const int def, const int de) : Living(nam,hp){

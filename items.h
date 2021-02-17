@@ -11,7 +11,7 @@ public:
     bool operator == (Item* t1){return getName() == t1->getName();};
     bool operator != (Item* t1){return !operator==(t1);};
     virtual int use() =0;
-    ~Item();
+    virtual ~Item();
 };
 
 enum HandType {OneHanded,TwoHanded};

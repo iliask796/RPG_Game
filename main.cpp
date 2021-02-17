@@ -1,5 +1,5 @@
 #include <iostream>
-#include "beings.h"
+#include "utility.h"
 using namespace std;
 
 int main() {
@@ -34,11 +34,21 @@ int main() {
     else if(test == 2){
         gameMap gm;
         gm.generateMap();
-        gm.displayMap();
-        gm.playerMove();
-        gm.playerMove();
-        gm.playerMove();
-        gm.displayMap();
+        while(true){
+            cout << "1.move,2.display,3.cancel -> select:";
+            int selection;
+            cin >> selection;
+            if (selection == 1){
+                gm.playerMove();
+            }
+            else if (selection == 2){
+                gm.displayMap();
+            }
+            else{
+                break;
+            }
+        }
+        cout << "Exiting.\n";
     }
     return 0;
 }

@@ -1,7 +1,6 @@
 #include <list>
 #include "items.h"
 #include "spells.h"
-#include "utility.h"
 using namespace std;
 
 class Living{
@@ -30,7 +29,6 @@ private:
     list<Item*>* inventory;
     list<Spell*>* spellbook;
     Item** gear;
-
 public:
     Hero(const char*, const int, const int, const int, const int, const int, const int=1000);
     int attack();
@@ -90,11 +88,13 @@ public:
 };
 
 class Exoskeleton : public Monster{
+public:
     Exoskeleton(const char*, const int = 105, const int = 8, const int = 20, const int = 60);
     ~Exoskeleton();
 };
 
 class Spirit : public Monster{
+public:
     Spirit(const char*, const int = 90, const int = 13, const int = 13, const int = 85);
     ~Spirit();
 };

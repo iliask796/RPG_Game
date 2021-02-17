@@ -18,7 +18,7 @@ public:
     bool operator == (Spell* s1){return getName() == s1->getName();};
     bool operator != (Spell* s1){return !operator==(s1);};
     virtual SpellType debuff() = 0;
-    ~Spell();
+    virtual ~Spell();
 };
 
 class IceSpell : public Spell{

@@ -1,52 +1,13 @@
-#include <cstring>
+#include "mapTiles.h"
+#include "initializer.h"
 
-class Tile{
-private:
-    char icon;
-public:
-    Tile(char);
-    char getIcon() const;
-    ~Tile();
-};
-
-class ObstacleTile : public Tile{
-public:
-    ObstacleTile(char='O');
-    ~ObstacleTile();
-};
-
-class MarketTile : public Tile{
-public:
-    MarketTile(char='M');
-    ~MarketTile();
-};
-
-class CommonTile : public Tile{
-public:
-    CommonTile(char='C');
-    ~CommonTile();
-};
-
-class EntranceTile : public Tile{
-public:
-    EntranceTile(char='E');
-    ~EntranceTile();
-
-};
-
-class BossTile : public Tile{
-public:
-    BossTile(char='B');
-    ~BossTile();
-};
-
-class playerPosition{
+class PlayerPosition{
 private:
     char icon;
     int x;
     int y;
 public:
-    playerPosition(const int, const int, const char = 'P');
+    PlayerPosition(const int, const int, const char = 'P');
     void goUp();
     void goRight();
     void goLeft();
@@ -55,17 +16,45 @@ public:
     int getX() const;
     int getY() const;
     void displayPosition();
-    ~playerPosition();
+    ~PlayerPosition();
+};
+
+class Marketplace{
+private:
+    list<Item*>* stock;
+public:
+    Marketplace();
+    void addInStock(Item*);
+    void displayStock();
+    void buyItem();
+    void sellItem();
+    void operate();
+    ~Marketplace();
+};
+
+class MobSpawner{
+private:
+    int capacity;
+    Monster** enemyTeam;
+public:
+    MobSpawner(int = 5);
+    void spawnEnemies();
+    void fightEnemies();
+    void despawnEnemies();
+    ~MobSpawner();
 };
 
 class gameMap{
 private:
     int gridSize;
     Tile*** grid;
-    playerPosition* player;
+    PlayerPosition* player;
+    Marketplace* shop;
 public:
     gameMap(int = 7);
     void generateMap();
+    bool isInBounds(int,int);
+    void playerInteract(int);
     void playerMove();
     void displayMap();
     ~gameMap();
