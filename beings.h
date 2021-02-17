@@ -1,3 +1,4 @@
+#include <vector>
 #include <list>
 #include "items.h"
 #include "spells.h"
@@ -10,6 +11,7 @@ private:
     int healthPower;
 public:
     Living(const char*, const int);
+    char *getName() const;
     int getLevel();
     void setLevel(int);
     int getHealthPower();
@@ -26,20 +28,20 @@ private:
     int agility;
     int money;
     int experience;
-    list<Item*>* inventory;
+    vector<Item*>* inventory;
     list<Spell*>* spellbook;
     Item** gear;
 public:
     Hero(const char*, const int, const int, const int, const int, const int, const int=1000);
     int attack();
     void addToInventory(Item*);
-    void removeFromInventory(Item*);
+    void removeFromInventory(int);
     void printInventory();
     void addToSpellbook(Spell*);
     void removeFromSpellbook(Spell*);
     void printSpellbook();
-    void equipWeapon(Weapon*);
-    void equipArmor(Armor*);
+    void equipWeapon(Item *);
+    void equipArmor(Item *);
     void removeWeapon();
     void removeArmor();
     void swapWeapon();

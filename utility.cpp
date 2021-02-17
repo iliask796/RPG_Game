@@ -110,7 +110,7 @@ MobSpawner::MobSpawner(int cap) {
 
 void MobSpawner::spawnEnemies() {
     srand(time(NULL));
-    int enemiesNum = rand()%5+1;
+    int enemiesNum = rand()%capacity+1;
     int enemyType;
     string tmpMobName;
     char* mobName;
@@ -136,6 +136,20 @@ void MobSpawner::spawnEnemies() {
     }
 }
 
+void MobSpawner::displayEnemies() {
+    cout << "Enemy Team = {";
+    for (int i=0;i<capacity;i++){
+        if (enemyTeam[i]!=NULL){
+            cout << enemyTeam[i]->getName() << ",";
+        }
+    }
+    cout << "}\n";
+}
+
+void MobSpawner::fightEnemies() {
+    cout << "Fight!\n";
+}
+
 void MobSpawner::despawnEnemies() {
     for (int i=0;i<capacity;i++){delete enemyTeam[i];}
     for (int i=0;i<capacity;i++){enemyTeam[i]=NULL;}
@@ -152,6 +166,7 @@ gameMap::gameMap(int size) {
         grid[i] = new Tile*[gridSize];
     }
     cout << "New Map Created!" << endl;
+    spawner = new MobSpawner(3);
 }
 
 void gameMap::generateMap() {
@@ -192,7 +207,13 @@ void gameMap::playerInteract(int direction) {
             shop->operate();
         }
         else if (grid[gridX][gridY]->getIcon()=='C'){
-            cout << "Fight Simulation\n";
+            int probability = rand()%100+1;
+            if (probability>50){
+                spawner->spawnEnemies();
+                spawner->displayEnemies();
+                spawner->fightEnemies();
+                spawner->despawnEnemies();
+            }
         }
         else if (grid[gridX][gridY]->getIcon()=='E'){
             cout<<"You are back at the entrance. Unfortunately there is no way out anymore...\n";

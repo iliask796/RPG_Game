@@ -39,6 +39,7 @@ private:
 public:
     MobSpawner(int = 5);
     void spawnEnemies();
+    void displayEnemies();
     void fightEnemies();
     void despawnEnemies();
     ~MobSpawner();
@@ -50,6 +51,7 @@ private:
     Tile*** grid;
     PlayerPosition* player;
     Marketplace* shop;
+    MobSpawner* spawner;
 public:
     gameMap(int = 7);
     void generateMap();

@@ -10,6 +10,10 @@ Living::Living(const char * nam, const int hp) {
     level = 1;
 }
 
+char *Living::getName() const {
+    return name;
+}
+
 int Living::getLevel() {
     return level;
 }
@@ -37,7 +41,7 @@ Hero::Hero(const char * nam, const int hp, const int mp, const int str, const in
     agility = agi;
     money = gold;
     experience = 0;
-    inventory = new list<Item*>();
+    inventory = new vector<Item*>();
     spellbook = new list<Spell*>();
     gear = new Item*[2];
     gear[0] = NULL;
@@ -52,8 +56,8 @@ void Hero::addToInventory(Item* t1){
     inventory->push_back(t1);
 }
 
-void Hero::removeFromInventory(Item * t1) {
-    inventory->remove(t1);
+void Hero::removeFromInventory(int t1) {
+    inventory->erase(inventory->begin()+t1);
 }
 
 void Hero::printInventory() {
@@ -80,7 +84,7 @@ void Hero::printSpellbook(){
     cout << "}\n";
 }
 
-void Hero::equipWeapon(Weapon* t1) {
+void Hero::equipWeapon(Item *t1) {
     if (gear[0]==NULL){
         gear[0] = t1;
     }
@@ -95,7 +99,7 @@ void Hero::removeWeapon() {
     else{cout<<"Your Hero is not holding a weapon.";}
 }
 
-void Hero::equipArmor(Armor * a1) {
+void Hero::equipArmor(Item *a1) {
     if (gear[1]==NULL){
         gear[1] = a1;
     }
@@ -119,18 +123,21 @@ void Hero::swapWeapon() {
     while(true){
         cout<<"Type your selection:";
         cin >> selection;
-        list<Item*>::iterator it = next(inventory->begin(), selection - 1);
-        s1 = typeid(**it).name();
-        s2 = "Weapon";
-        if (s1.find(s2) != std::string::npos) {
-            removeWeapon();
-            this->removeFromInventory(*it);
-            equipWeapon(dynamic_cast<Weapon *>(*it));
-            cout<<"Successfully swapped gear.\n";
+        if (selection==-1){
+            cout<<"Option Cancelled.\n";
             break;
         }
-        else if(selection==-1) {
-            cout<<"Option Cancelled.\n";
+        else if (selection > inventory->size() or selection <=0){
+            cout<<"Your option is not valid, because it is out of inventory size bounds. Please try again.\n";
+            continue;
+        }
+        s1 = typeid(*(inventory->at(selection-1))).name();
+        s2 = "Weapon";
+        if (s1.find(s2) != std::string::npos){
+            removeWeapon();
+            equipWeapon((inventory->at(selection-1)));
+            this->removeFromInventory(selection-1);
+            cout<<"Successfully swapped gear.\n";
             break;
         }
         else{cout<<"Your selected item is not a Weapon. Please try again or cancel.\n";}
@@ -146,18 +153,21 @@ void Hero::swapArmor(){
     while(true){
         cout<<"Type your selection:";
         cin >> selection;
-        list<Item*>::iterator it = next(inventory->begin(), selection - 1);
-        s1 = typeid(**it).name();
-        s2 = "Armor";
-        if (s1.find(s2) != std::string::npos) {
-            removeArmor();
-            this->removeFromInventory(*it);
-            equipArmor(dynamic_cast<Armor *>(*it));
-            cout<<"Successfully swapped gear.\n";
+        if (selection==-1){
+            cout<<"Option Cancelled.\n";
             break;
         }
-        else if(selection==-1) {
-            cout<<"Option Cancelled.\n";
+        else if (selection > inventory->size() or selection <=0){
+            cout<<"Your option is not valid, because it is out of inventory size bounds. Please try again.\n";
+            continue;
+        }
+        s1 = typeid(*(inventory->at(selection-1))).name();
+        s2 = "Armor";
+        if (s1.find(s2) != std::string::npos){
+            removeArmor();
+            equipArmor((inventory->at(selection - 1)));
+            this->removeFromInventory(selection-1);
+            cout<<"Successfully swapped gear.\n";
             break;
         }
         else{cout<<"Your selected item is not an Armor. Please try again or cancel.\n";}
@@ -173,18 +183,11 @@ void Hero::printGear() {
 }
 
 Hero::~Hero() {
-    for(auto& pItem: *inventory){
-        delete pItem;
-    }
+    //CLEAR MEMORY!!!
     inventory->clear();
     delete inventory;
-    for(auto& pSpell: *spellbook){
-        delete pSpell;
-    }
     spellbook->clear();
     delete spellbook;
-    for (int i=0;i<2;i++){delete gear[i];}
-    delete[] gear;
 }
 
 Monster::Monster(const char * nam, const int hp, const int dmg, const int def, const int de) : Living(nam,hp){
