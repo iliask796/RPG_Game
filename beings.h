@@ -29,7 +29,7 @@ private:
     int money;
     int experience;
     vector<Item*>* inventory;
-    list<Spell*>* spellbook;
+    vector<Spell*>* spellbook;
     Item** gear;
 public:
     Hero(const char*, const int, const int, const int, const int, const int, const int=1000);
@@ -38,7 +38,7 @@ public:
     void removeFromInventory(int);
     void printInventory();
     void addToSpellbook(Spell*);
-    void removeFromSpellbook(Spell*);
+    void removeFromSpellbook(int);
     void printSpellbook();
     void equipWeapon(Item *);
     void equipArmor(Item *);
@@ -59,6 +59,8 @@ private:
 public:
     Monster(const char*, const int, const int, const int, const int);
     int attack();
+    int getDefense() const;
+    int getDodge() const;
     ~Monster();
 };
 

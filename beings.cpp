@@ -42,7 +42,7 @@ Hero::Hero(const char * nam, const int hp, const int mp, const int str, const in
     money = gold;
     experience = 0;
     inventory = new vector<Item*>();
-    spellbook = new list<Spell*>();
+    spellbook = new vector<Spell*>();
     gear = new Item*[2];
     gear[0] = NULL;
     gear[1] = NULL;
@@ -72,8 +72,8 @@ void Hero::addToSpellbook(Spell* s1){
     spellbook->push_back(s1);
 }
 
-void Hero::removeFromSpellbook(Spell* s1) {
-    spellbook->remove(s1);
+void Hero::removeFromSpellbook(int t1) {
+    spellbook->erase(spellbook->begin()+t1);
 }
 
 void Hero::printSpellbook(){
@@ -183,11 +183,17 @@ void Hero::printGear() {
 }
 
 Hero::~Hero() {
-    //CLEAR MEMORY!!!
+//    TODO:MEMORY CLEAR
+//    for(int i=0;i<inventory->size();i++){
+//        delete inventory->at(i);
+//    }
     inventory->clear();
     delete inventory;
     spellbook->clear();
     delete spellbook;
+//    delete gear[0];
+//    delete gear[1];
+//    delete[] gear;
 }
 
 Monster::Monster(const char * nam, const int hp, const int dmg, const int def, const int de) : Living(nam,hp){
@@ -198,6 +204,14 @@ Monster::Monster(const char * nam, const int hp, const int dmg, const int def, c
 
 int Monster::attack() {
     return damage;
+}
+
+int Monster::getDefense() const {
+    return defense;
+}
+
+int Monster::getDodge() const {
+    return dodge;
 }
 
 Monster::~Monster() {

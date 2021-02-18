@@ -1,6 +1,9 @@
 #include "mapTiles.h"
 #include "initializer.h"
 
+Hero* heroSelection();
+string nameSelection();
+
 class PlayerPosition{
 private:
     char icon;
@@ -49,11 +52,12 @@ class gameMap{
 private:
     int gridSize;
     Tile*** grid;
+    Hero** allies;
     PlayerPosition* player;
     Marketplace* shop;
     MobSpawner* spawner;
 public:
-    gameMap(int = 7);
+    gameMap(Hero**, int = 7);
     void generateMap();
     bool isInBounds(int,int);
     void playerInteract(int);

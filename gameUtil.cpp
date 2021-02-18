@@ -1,8 +1,55 @@
-#include "utility.h"
+#include "gameUtil.h"
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
 using namespace std;
+
+Hero* heroSelection(){
+    char* name;
+    name = const_cast<char*>(nameSelection().c_str());
+    string role;
+    cout << "Select a role for your hero. (Available: WARRIOR,SORCERER,PALADIN)\n";
+    cout << "Make your selection:";
+    cin >> role;
+    Hero* h;
+    while(true){
+        if (role == "WARRIOR"){
+            h = new Warrior(name);
+            break;
+        }
+        else if (role == "SORCERER"){
+            h = new Sorcerer(name);
+            break;
+        }
+        else if (role == "PALADIN"){
+            h = new Paladin(name);
+            break;
+        }
+        else{
+            cout << "Please check your spelling and try again:";
+            cin >> role;
+        }
+    }
+    return h;
+}
+
+string nameSelection(){
+    string choice;
+    string name;
+    cout << "Would you like to select your own name? (YES/NO)\n";
+    cout << "Insert selection:";
+    cin >> choice;
+    if (choice == "YES"){
+        cout << "Insert your name:";
+        cin.ignore();
+        getline(cin,name);
+        return name;
+    }
+    else{
+        name = NameInitializerList::generateHeroName();
+        return name;
+    }
+}
 
 PlayerPosition::PlayerPosition(const int x1, const int y1, const char ch) {
     x = x1;
@@ -159,13 +206,13 @@ MobSpawner::~MobSpawner() {
     delete[] enemyTeam;
 }
 
-gameMap::gameMap(int size) {
+gameMap::gameMap(Hero** al, int size) {
+    allies = al;
     gridSize = size;
     grid = new Tile**[gridSize];
     for (int i = 0; i < gridSize; i++){
         grid[i] = new Tile*[gridSize];
     }
-    cout << "New Map Created!" << endl;
     spawner = new MobSpawner(3);
 }
 
