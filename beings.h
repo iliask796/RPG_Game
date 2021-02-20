@@ -1,5 +1,4 @@
 #include <vector>
-#include <list>
 #include "items.h"
 #include "spells.h"
 using namespace std;
@@ -33,6 +32,13 @@ private:
     Item** gear;
 public:
     Hero(const char*, const int, const int, const int, const int, const int, const int=1000);
+    int getMagicPower() const;
+    int getMoney() const;
+    int getExperience() const;
+    int getInventorySize() const;
+    int getSpellbookSize() const;
+    void displayStats();
+    void displayEquipment();
     int attack();
     void addToInventory(Item*);
     void removeFromInventory(int);

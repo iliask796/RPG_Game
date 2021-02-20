@@ -7,6 +7,13 @@ vector<string> NameInitializerList::ExoskeletonNames{"Necromancer","Skeleton Kni
 vector<string> NameInitializerList::SpiritNames{"Mountain Spirit","Fire Spirit","Wind Spirit","Earth Spirit","Lake Spirit","River Spirit","Sea Spirit","Forest Spirit","Desert Spirit"};
 vector<string> NameInitializerList::HeroNames{"Angela Wood","Fred Ford","Esme Williams","Jessie Kennedy","Mia Warren","Zara Marshall","Jenna Turner","Omar Murphy",
                                               "Edward Rogers","Abbie Parker","Hugo Gray","Joe Russell","Caleb Morgan","Darcy Richards"};
+vector<string> NameInitializerList::WeaponNames{"Sword of Doom","Tormented Ornament","Shadow Steel-Blade","Call of Mourning","Unholy Swift-Blade","Frost Catalyst","Blood-Forged Scimitar",
+                                                "Orb of Suffering","Hope's End"};
+vector<string> NameInitializerList::ArmorNames{"Boots of Swiftness","Angelic Sandals","Boots of Destruction","Frost Helmet","Skull of Darkness","Flaming Circlet","Arcane Robe",
+                                               "Dragonic Armor","Dark Energy Veil"};
+vector<string> NameInitializerList::IceSpellNames{"Ice Lance","Ice Cone","Frostbite","Blizzard"};
+vector<string> NameInitializerList::FireSpellNames{"Fire Ball","Flame Strike","Inferno","Armageddon"};
+vector<string> NameInitializerList::LightningSpellNames{"Lightning Bolt","Lightning Field","Electric Shock","Thunderstorm"};
 int NameInitializerList::random_element = 0;
 
 NameInitializerList::NameInitializerList() {
@@ -31,6 +38,26 @@ string NameInitializerList::generateSpiritName() {
 string NameInitializerList::generateHeroName() {
     random_element = rand()%HeroNames.size();
     return HeroNames[random_element];
+}
+
+string NameInitializerList::generateWeaponNames(int slot) {
+    return WeaponNames[slot-1];
+}
+
+string NameInitializerList::generateArmorNames(int slot) {
+    return ArmorNames[slot-1];
+}
+
+string NameInitializerList::generateIceSpellNames(int slot) {
+    return IceSpellNames[slot-1];
+}
+
+string NameInitializerList::generateFireSpellNames(int slot) {
+    return FireSpellNames[slot-1];
+}
+
+string NameInitializerList::generateLightningSpellNames(int slot) {
+    return LightningSpellNames[slot-1];
 }
 
 NameInitializerList::~NameInitializerList() {

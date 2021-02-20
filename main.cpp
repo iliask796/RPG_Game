@@ -29,14 +29,38 @@ int main() {
             allyTeam[2] = heroSelection();
             break;
     }
-//    cout << "Ally Team = {";
-//    for (int i=0;i<playerSelection;i++){
-//        cout << allyTeam[i]->getName() << ",";
-//    }
-//    cout << "}\n";
-    gameMap* map = new gameMap(allyTeam);
+    gameMap* map = new gameMap(playerSelection,allyTeam);
     map->generateMap();
     cout << "Map generated. The game now begins! Prepare yourself for an exciting adventure.\n";
     cout << "You entered the dungeon. Be aware. Each movement might end up with a fight.\n";
+    bool exit = false;
+    while (!exit){
+        cout << "What's your next move?\n";
+        cout << "Options: 1)Inspect characters. 2)Display Map. 3)Move a square. 4)Check equipment. 5)Quit game.\n";
+        int selection;
+        cout << "Make your selection:";
+        cin >> selection;
+        //TODO: use + equip selection
+        switch (selection) {
+            case 1:
+                map->displayHeroStats();
+                break;
+            case 2:
+                map->displayMap();
+                break;
+            case 3:
+                map->playerMove();
+                break;
+            case 4:
+                map->displayHeroInventory();
+                break;
+            case 5:
+                exit = true;
+                cout << "I guess not everyone is cut out for adventures. Thanks for playing. Goodbye~\n";
+                break;
+            default:
+                cout << "Sorry. This is not a valid option.\n";
+        }
+    }
     return 0;
 }

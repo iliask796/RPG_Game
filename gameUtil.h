@@ -24,14 +24,22 @@ public:
 
 class Marketplace{
 private:
-    list<Item*>* stock;
+    vector<Item*>* itemStock;
+    vector<Spell*>* spellStock;
 public:
     Marketplace();
-    void addInStock(Item*);
-    void displayStock();
-    void buyItem();
-    void sellItem();
-    void operate();
+    void addInItemStock(Item*);
+    void addInSpellStock(Spell*);
+    void removeFromItemStock(int);
+    void removeFromSpellStock(int);
+    void generateStock();
+    void displayItemStock();
+    void displaySpellStock();
+    void buyItem(Hero*);
+    void sellItem(Hero*);
+    void buySpell(Hero*);
+    void sellSpell(Hero*);
+    void operate(int,Hero**);
     ~Marketplace();
 };
 
@@ -52,16 +60,19 @@ class gameMap{
 private:
     int gridSize;
     Tile*** grid;
+    int characters;
     Hero** allies;
     PlayerPosition* player;
     Marketplace* shop;
     MobSpawner* spawner;
 public:
-    gameMap(Hero**, int = 7);
+    gameMap(int, Hero**, int = 7);
     void generateMap();
     bool isInBounds(int,int);
     void playerInteract(int);
     void playerMove();
     void displayMap();
+    void displayHeroStats();
+    void displayHeroInventory();
     ~gameMap();
 };

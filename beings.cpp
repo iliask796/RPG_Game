@@ -48,6 +48,37 @@ Hero::Hero(const char * nam, const int hp, const int mp, const int str, const in
     gear[1] = NULL;
 }
 
+int Hero::getMagicPower() const {
+    return magicPower;
+}
+
+int Hero::getMoney() const {
+    return money;
+}
+
+int Hero::getExperience() const {
+    return experience;
+}
+
+int Hero::getInventorySize() const {
+    return inventory->size();
+}
+
+int Hero::getSpellbookSize() const {
+    return spellbook->size();
+}
+
+void Hero::displayStats() {
+    cout<<"Displaying stats for Hero: "<<this->getName()<<".\nLevel = "<<this->getLevel()<<", HP = "<<this->getHealthPower()<<", MP = "<<this->getMagicPower()<<", Gold = "<<this->getMoney()<<", EXP = "<<this->getExperience()<<endl;
+}
+
+void Hero::displayEquipment() {
+    cout<<"Displaying info about Hero: "<<this->getName()<<".\n";
+    this->printGear();
+    this->printInventory();
+    this->printSpellbook();
+}
+
 int Hero::attack() {
     return strength;
 }
@@ -183,17 +214,27 @@ void Hero::printGear() {
 }
 
 Hero::~Hero() {
-//    TODO:MEMORY CLEAR
-//    for(int i=0;i<inventory->size();i++){
-//        delete inventory->at(i);
-//    }
+    if (inventory->size()!=0){
+        for(auto& pItem: *inventory){
+            delete pItem;
+        }
+    }
     inventory->clear();
     delete inventory;
+    if (spellbook->size()!=0){
+        for(auto& pSpell: *spellbook){
+            delete pSpell;
+        }
+    }
     spellbook->clear();
     delete spellbook;
-//    delete gear[0];
-//    delete gear[1];
-//    delete[] gear;
+    if (gear[0]!=NULL){
+        delete gear[0];
+    }
+    if (gear[1]!=NULL){
+        delete gear[1];
+    }
+    delete[] gear;
 }
 
 Monster::Monster(const char * nam, const int hp, const int dmg, const int def, const int de) : Living(nam,hp){

@@ -70,4 +70,3 @@ SpellType LightningSpell::debuff() {
 LightningSpell::~LightningSpell() {
 
 }
-
