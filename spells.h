@@ -14,7 +14,7 @@ public:
     int getPrice() const;
     int getLevelReq() const;
     int getManaReq() const;
-    int cast();
+    int cast(int);
     bool operator == (Spell* s1){return getName() == s1->getName();};
     bool operator != (Spell* s1){return !operator==(s1);};
     virtual SpellType debuff() = 0;

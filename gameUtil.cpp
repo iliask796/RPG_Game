@@ -161,7 +161,6 @@ void Marketplace::displaySpellStock() {
     }
 }
 
-//TODO: gold remove/add
 void Marketplace::buyItem(Hero* h1) {
     cout << "This is what is up for sale.\n";
     this->displayItemStock();
@@ -175,8 +174,14 @@ void Marketplace::buyItem(Hero* h1) {
         cout << "Wrong choice. Pick more carefully.\n";
     }
     else {
-        h1->addToInventory(itemStock->at(selection-1));
-        this->removeFromItemStock(selection-1);
+        if(itemStock->at(selection-1)->getPrice()>h1->getMoney()){
+            cout << "Sorry, not enough gold.\n";
+        }
+        else{
+            h1->removeMoney(itemStock->at(selection-1)->getPrice());
+            h1->addToInventory(itemStock->at(selection-1));
+            this->removeFromItemStock(selection-1);
+        }
     }
 }
 
@@ -193,6 +198,7 @@ void Marketplace::sellItem(Hero* h1) {
         cout << "Wrong choice. Pick more carefully.\n";
     }
     else {
+        h1->addMoneyFromItem(selection-1);
         h1->removeFromInventory(selection-1);
     }
 }
@@ -210,6 +216,7 @@ void Marketplace::buySpell(Hero* h1) {
         cout << "Wrong choice. Pick more carefully.\n";
     }
     else {
+        h1->removeMoney(spellStock->at(selection-1)->getPrice());
         h1->addToSpellbook(spellStock->at(selection-1));
         this->removeFromSpellStock(selection-1);
     }
@@ -228,11 +235,12 @@ void Marketplace::sellSpell(Hero* h1) {
         cout << "Wrong choice. Pick more carefully.\n";
     }
     else {
+        h1->addMoneyFromSpell(selection-1);
         h1->removeFromSpellbook(selection-1);
     }
 }
 
-void Marketplace::operate(int no,Hero** al) {
+void Marketplace::operate(int number, Hero** al) {
     cout<<"The Merchant greets you with a smile.\n";
     int optionSelection;
     int typeSelection;
@@ -252,15 +260,19 @@ void Marketplace::operate(int no,Hero** al) {
                     cout << "Wrong selection. Please try again.\n";
                     break;
                 }
-                if (no == 1){
+                if (number == 1){
                     if (typeSelection == 1){this->buyItem(al[0]);}
                     else {this->buySpell(al[0]);}
                 }
                 else {
-                    cout << "Your team consists of " << no << " Heroes.\n";
+                    cout << "Your team consists of " << number << " Heroes.\n[";
+                    for (int i=0;i<number;i++){
+                        cout << i+1 << "." << al[i]->getName() << ", ";
+                    }
+                    cout << "]\n";
                     cout << "Select a hero by its number to initiate a transaction:";
                     cin >> heroSelection;
-                    if (heroSelection <= no and heroSelection >= 1){
+                    if (heroSelection <= number and heroSelection >= 1){
                         if (typeSelection == 1){this->buyItem(al[heroSelection-1]);}
                         else {this->buySpell(al[heroSelection-1]);}
                     }
@@ -278,15 +290,15 @@ void Marketplace::operate(int no,Hero** al) {
                     cout << "Wrong selection. Please try again.\n";
                     break;
                 }
-                if (no == 1){
+                if (number == 1){
                     if (typeSelection == 1){this->sellItem(al[0]);}
                     else {this->sellSpell(al[0]);}
                 }
                 else {
-                    cout << "Your team consists of " << no << " Heroes.\n";
+                    cout << "Your team consists of " << number << " Heroes.\n";
                     cout << "Select a hero by its number to initiate a transaction:";
                     cin >> heroSelection;
-                    if (heroSelection <= no and heroSelection >= 1){
+                    if (heroSelection <= number and heroSelection >= 1){
                         if (typeSelection == 1) {this->sellItem(al[heroSelection-1]);}
                         else {this->sellSpell(al[heroSelection-1]);}
                     }
@@ -332,9 +344,9 @@ MobSpawner::MobSpawner(int cap) {
     }
 }
 
-void MobSpawner::spawnEnemies() {
+void MobSpawner::spawnEnemies(int amplifier) {
     srand(time(NULL));
-    int enemiesNum = rand()%capacity+1;
+    enemiesNum = rand()%capacity+1;
     int enemyType;
     string tmpMobName;
     char* mobName;
@@ -357,6 +369,7 @@ void MobSpawner::spawnEnemies() {
                 enemyTeam[i] = new Spirit(mobName);
                 break;
         }
+        enemyTeam[i]->adjustStats(amplifier);
     }
 }
 
@@ -370,9 +383,135 @@ void MobSpawner::displayEnemies() {
     cout << "}\n";
 }
 
+void MobSpawner::displayCombatStats(int number, Hero** al){
+    int i;
+    cout << "Ally Team : \n";
+    for (i=0;i<number;i++){
+        cout << al[i]->getName() << " -> HP = " << al[i]->getCurrentHP() << ", MP = " << al[i]->getCurrentMP() << endl;
+    }
+    cout << "Enemy Team :\n";
+    for (i=0;i<capacity;i++){
+        if (enemyTeam[i]!=NULL){
+            cout << enemyTeam[i]->getName() << " -> HP = " << enemyTeam[i]->getCurrentHP() << endl;
+        }
+    }
+}
+
 //TODO: battle
-void MobSpawner::fightEnemies() {
-    cout << "Fight!\n";
+void MobSpawner::fightEnemies(int number, Hero** al) {
+    bool allyWin = false;
+    bool enemyWin = false;
+    int allyEval;
+    int enemyEval;
+    int i;
+    int j;
+    int combatSelection;
+    int targetSelection;
+    bool canCast;
+    while (true){
+        for (i=0; i < number; i++){
+            allyEval = 0;
+            if (al[i]->getCurrentHP()<al[i]->getHealthPower() and al[i]->getCurrentHP()>0){
+                al[i]->recoverCurrentHP(al[i]->getHealthPower()*0.1);
+            }
+            if (al[i]->getCurrentMP()<al[i]->getMagicPower()){
+                al[i]->recoverCurrentMP(al[i]->getMagicPower()*0.4);
+            }
+            cout << "It's " << al[i]->getName() << "'s turn.\n";
+            cout << "1.Cast a spell\n2.Attack.\n3.Use a potion.\n4.Swap gear.\n5.Display combat stats.\n";
+            cout << "Select an action:";
+            cin >> combatSelection;
+            switch (combatSelection) {
+                case 1:
+                    canCast=true;
+                    while(true){
+                        if (al[i]->hasSpells()==true){
+                            this->displayEnemies();
+                            cout << "Select an enemy target.(Example: 1 for first enemy.):";
+                            cin >> targetSelection;
+                            if (targetSelection > 0 and targetSelection <= enemiesNum){
+                                if (enemyTeam[targetSelection-1]->getCurrentHP()>0){
+                                    enemyTeam[targetSelection-1]->reduceCurrentHP(al[i]->cast());
+                                    break;
+                                }
+                                else {
+                                    cout << "Character is already dead. Please try again.\n";
+                                }
+                            }
+                            else {
+                                cout << "Wrong target. Please try again.\n";
+                            }
+                        }
+                        else {
+                            cout << "Your hero has not learned any spells yet. You attack instead.\n";
+                            canCast = false;
+                            break;
+                        }
+                    }
+                    if (canCast){
+                        break;
+                    }
+                case 2:
+                    while(true){
+                        this->displayEnemies();
+                        cout << "Select an enemy target.(Example: 1 for first enemy.):";
+                        cin >> targetSelection;
+                        if (targetSelection > 0 and targetSelection <= enemiesNum){
+                            if (enemyTeam[targetSelection-1]->getCurrentHP()>0){
+                                enemyTeam[targetSelection-1]->reduceCurrentHP(al[i]->attack());
+                                break;
+                            }
+                            else {
+                                cout << "Character is already dead. Please try again.\n";
+                            }
+                        }
+                        else {
+                            cout << "Wrong target. Please try again.\n";
+                        }
+                    }
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    this->displayCombatStats(number,al);
+                    i--;
+                    break;
+                default:
+                    cout << "Invalid action. You lost your turn.\n";
+            }
+            for (j=0;j<enemiesNum;j++){
+                if (enemyTeam[j]->getCurrentHP()<=0){allyEval++;}
+            }
+            if (allyEval==enemiesNum){
+                allyWin=true;
+                break;
+            }
+        }
+        if (allyWin){
+            cout << "Victory!\n";
+            break;
+        }
+        for (i=0;i<enemiesNum;i++){
+            enemyEval = 0;
+            if (enemyTeam[i]->getCurrentHP()<enemyTeam[i]->getHealthPower() and enemyTeam[i]->getCurrentHP()>0){
+                enemyTeam[i]->recoverCurrentHP(enemyTeam[i]->getHealthPower()*0.1);
+            }
+            cout << "Enemy attack.\n";
+            for (j=0; j < number; j++){
+                if (al[j]->getCurrentHP()<=0){enemyEval++;}
+            }
+            if (enemyEval == number){
+                enemyWin=true;
+                break;
+            }
+        }
+        if (enemyWin){
+            cout << "Defeat!\n";
+            break;
+        }
+    }
 }
 
 void MobSpawner::despawnEnemies() {
@@ -384,8 +523,8 @@ MobSpawner::~MobSpawner() {
     delete[] enemyTeam;
 }
 
-gameMap::gameMap(int no, Hero** al, int size) {
-    characters = no;
+gameMap::gameMap(int number, Hero** al, int size) {
+    characters = number;
     allies = al;
     gridSize = size;
     grid = new Tile**[gridSize];
@@ -436,9 +575,10 @@ void gameMap::playerInteract(int direction) {
         else if (grid[gridX][gridY]->getIcon()=='C'){
             int probability = rand()%100+1;
             if (probability>50){
-                spawner->spawnEnemies();
+                cout << "You get ambushed by monsters.\n";
+                spawner->spawnEnemies(allies[0]->getLevel());
                 spawner->displayEnemies();
-                spawner->fightEnemies();
+                spawner->fightEnemies(characters,allies);
                 spawner->despawnEnemies();
             }
         }

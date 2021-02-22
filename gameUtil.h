@@ -46,12 +46,14 @@ public:
 class MobSpawner{
 private:
     int capacity;
+    int enemiesNum;
     Monster** enemyTeam;
 public:
     MobSpawner(int = 5);
-    void spawnEnemies();
+    void spawnEnemies(int);
     void displayEnemies();
-    void fightEnemies();
+    void displayCombatStats(int,Hero**);
+    void fightEnemies(int,Hero**);
     void despawnEnemies();
     ~MobSpawner();
 };

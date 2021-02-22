@@ -7,6 +7,7 @@ Living::Living(const char * nam, const int hp) {
     name = new char[strlen(nam)+1];
     strcpy(name,nam);
     healthPower = hp;
+    currentHP = hp;
     level = 1;
 }
 
@@ -30,12 +31,34 @@ void Living::setHealthPower(int newHP) {
     Living::healthPower = newHP;
 }
 
+int Living::getCurrentHP() const {
+    return currentHP;
+}
+
+void Living::setCurrentHP(int hp) {
+    currentHP = hp;
+}
+
+void Living::recoverCurrentHP(int recovery){
+    if (currentHP + recovery > healthPower){
+        currentHP = healthPower;
+    }
+    else {
+        currentHP += recovery;
+    }
+}
+
+void Living::reduceCurrentHP(int damage) {
+    currentHP -= damage;
+}
+
 Living::~Living() {
     delete[] name;
 }
 
 Hero::Hero(const char * nam, const int hp, const int mp, const int str, const int dex, const int agi, const int gold) : Living(nam,hp){
     magicPower = mp;
+    currentMP = mp;
     strength = str;
     dexterity = dex;
     agility = agi;
@@ -52,12 +75,99 @@ int Hero::getMagicPower() const {
     return magicPower;
 }
 
+int Hero::getCurrentMP() const {
+    return currentMP;
+}
+
+void Hero::recoverCurrentMP(int recovery) {
+    if (currentMP + recovery > magicPower){
+        currentMP = magicPower;
+    }
+    else {
+        currentMP += recovery;
+    }
+}
+
 int Hero::getMoney() const {
     return money;
 }
 
+void Hero::addMoneyFromItem(int position) {
+    int gold = inventory->at(position)->getPrice();
+    money += (gold*0.5);
+}
+
+void Hero::addMoneyFromSpell(int position) {
+    int gold = spellbook->at(position)->getPrice();
+    money += (gold*0.5);
+}
+
+void Hero::removeMoney(int gold){
+    money -= gold;
+}
+
 int Hero::getExperience() const {
     return experience;
+}
+
+void Hero::addExperience(int exp) {
+    experience += exp;
+    if (experience >=100){
+        experience -= 100;
+        this->levelUp();
+    }
+}
+
+void Hero::addStrength(int str) {
+    strength += str;
+}
+
+void Hero::addDexterity(int dex) {
+    dexterity += dex;
+}
+
+void Hero::addAgility(int agi) {
+    agility += agi;
+}
+
+void Hero::displayStats() {
+    cout<<"Displaying stats for Hero: "<<this->getName()<<".\nLevel = "<<this->getLevel()<<", HP = "<<this->getHealthPower()<<", MP = "<<this->getMagicPower()<<", Gold = "<<this->getMoney()<<", EXP = "<<this->getExperience()<<endl;
+}
+
+int Hero::attack() {
+    if (gear[0]==NULL){
+        return strength;
+    }
+    else {
+        return strength+gear[0]->use();
+    }
+}
+
+bool Hero::hasSpells() {
+    return (spellbook->size()==0?false:true);
+}
+
+int Hero::cast(){
+    this->printSpellbook();
+    int spellSelection;
+    while(true){
+        cout << "Select a spell to cast.(Example: 1 for the first spell):";
+        cin >> spellSelection;
+        if (spellSelection<=0 or spellSelection>spellbook->size()){
+            cout << "Invalid option. Please try again.\n";
+        }
+        else {
+            return spellbook->at(spellSelection-1)->cast(dexterity);
+        }
+    }
+}
+
+int Hero::getDexterity() {
+    return dexterity;
+}
+
+int Hero::getAgility() {
+    return agility;
 }
 
 int Hero::getInventorySize() const {
@@ -68,19 +178,11 @@ int Hero::getSpellbookSize() const {
     return spellbook->size();
 }
 
-void Hero::displayStats() {
-    cout<<"Displaying stats for Hero: "<<this->getName()<<".\nLevel = "<<this->getLevel()<<", HP = "<<this->getHealthPower()<<", MP = "<<this->getMagicPower()<<", Gold = "<<this->getMoney()<<", EXP = "<<this->getExperience()<<endl;
-}
-
 void Hero::displayEquipment() {
     cout<<"Displaying info about Hero: "<<this->getName()<<".\n";
     this->printGear();
     this->printInventory();
     this->printSpellbook();
-}
-
-int Hero::attack() {
-    return strength;
 }
 
 void Hero::addToInventory(Item* t1){
@@ -253,6 +355,14 @@ int Monster::getDefense() const {
 
 int Monster::getDodge() const {
     return dodge;
+}
+
+void Monster::adjustStats(int amplifier){
+    this->setLevel(amplifier);
+    this->setHealthPower(this->getHealthPower()*this->getLevel()*0.5);
+    this->setCurrentHP(getHealthPower());
+    damage *= amplifier;
+    defense *= amplifier;
 }
 
 Monster::~Monster() {

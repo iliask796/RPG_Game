@@ -27,8 +27,9 @@ int Spell::getManaReq() const {
     return manaReq;
 }
 
-int Spell::cast() {
-    return (maxDamage-minDamage);
+int Spell::cast(int dex) {
+    int spellDamage = minDamage+(maxDamage-minDamage)*(dex/50);
+    return (spellDamage>=maxDamage?maxDamage:spellDamage);
 }
 
 Spell::~Spell() {
