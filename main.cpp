@@ -34,13 +34,14 @@ int main() {
     cout << "Map generated. The game now begins! Prepare yourself for an exciting adventure.\n";
     cout << "You entered the dungeon. Be aware. Each movement might end up with a fight.\n";
     bool exit = false;
+    int selection;
+    int charSelection;
     while (!exit){
         cout << "What's your next move?\n";
         cout << "Options: 1)Inspect characters. 2)Display Map. 3)Move a square. 4)Check equipment. 5)Quit game.\n";
-        int selection;
         cout << "Make your selection:";
         cin >> selection;
-        //TODO: use + equip selection
+        //TODO: use pot
         switch (selection) {
             case 1:
                 map->displayHeroStats();
@@ -53,6 +54,36 @@ int main() {
                 break;
             case 4:
                 map->displayHeroInventory();
+                cout << "Would you like to swap gear or use a potion?\n";
+                cout << "1.Swap Weapon.\n2.Swap Armor.\n3.Use a Potion.\n4.Cancel Selection.\n";
+                cout << "Input your selection:";
+                cin >> selection;
+                if (selection<=3 and selection >=1){
+                    if (playerSelection == 1){
+                        charSelection = 1;
+                    }
+                    else {
+                        cout << "Select a hero by its number to initiate the action:";
+                        cin >> charSelection;
+                    }
+                    if (charSelection <= playerSelection){
+                        if (selection == 1){
+                            allyTeam[charSelection - 1]->swapWeapon();
+                        }
+                        else if (selection == 2){
+                            allyTeam[charSelection - 1]->swapArmor();
+                        }
+                        else if (selection == 3){
+                            cout << "Pot used.\n";
+                        }
+                        else {
+                            cout << "Option Cancelled.\n";
+                        }
+                    }
+                    else {
+                        cout << "Invalid Input. Option Cancelled.\n";
+                    }
+                }
                 break;
             case 5:
                 exit = true;

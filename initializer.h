@@ -14,6 +14,7 @@ private:
     static vector<string> IceSpellNames;
     static vector<string> FireSpellNames;
     static vector<string> LightningSpellNames;
+    static vector<string> PotionNames;
     static int random_element;
 public:
     NameInitializerList();
@@ -26,5 +27,6 @@ public:
     static string generateIceSpellNames(int);
     static string generateFireSpellNames(int);
     static string generateLightningSpellNames(int);
+    static string generatePotionName();
     ~NameInitializerList();
 };

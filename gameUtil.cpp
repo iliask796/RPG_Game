@@ -85,10 +85,6 @@ int PlayerPosition::getY() const {
     return y;
 }
 
-void PlayerPosition::displayPosition() {
-    cout<<"Player is currently in ("<<x<<","<<y<<")\n";
-}
-
 PlayerPosition::~PlayerPosition() {
 
 }
@@ -142,6 +138,35 @@ void Marketplace::generateStock() {
         this->addInSpellStock(s1);
         this->addInSpellStock(s2);
         this->addInSpellStock(s3);
+    }
+    nameSlot = 1;
+    string pname;
+    PotionType ptype;
+    int pstat;
+    for (i=1;i<=5;i++){
+        pname = NameInitializerList::generatePotionName();
+        if (pname == "Health Potion"){
+            ptype = HEAL;
+            pstat = 20;
+        }
+        else if (pname == "Mana Potion"){
+            ptype = MANA;
+            pstat = 10;
+        }
+        else if (pname == "Strength Potion"){
+            ptype = STRENGTH;
+            pstat = 3;
+        }
+        else if (pname == "Dexterity Potion"){
+            ptype = DEXTERITY;
+            pstat = 3;
+        }
+        else if (pname == "Agility Potion"){
+            ptype = AGILITY;
+            pstat = 3;
+        }
+        Potion* p = new Potion(const_cast<char*>(pname.c_str()),125*i,i,ptype,pstat*i);
+        this->addInItemStock(p);
     }
 }
 
@@ -397,8 +422,8 @@ void MobSpawner::displayCombatStats(int number, Hero** al){
     }
 }
 
-//TODO: battle
-void MobSpawner::fightEnemies(int number, Hero** al) {
+//TODO: battle (enemy,pot,defense,agility)
+void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
     bool allyWin = false;
     bool enemyWin = false;
     int allyEval;
@@ -407,18 +432,20 @@ void MobSpawner::fightEnemies(int number, Hero** al) {
     int j;
     int combatSelection;
     int targetSelection;
+    int menuSelection;
+    int spellDamage;
     bool canCast;
     while (true){
-        for (i=0; i < number; i++){
+        for (i=0; i < alliesNum; i++){
             allyEval = 0;
             if (al[i]->getCurrentHP()<al[i]->getHealthPower() and al[i]->getCurrentHP()>0){
                 al[i]->recoverCurrentHP(al[i]->getHealthPower()*0.1);
             }
             if (al[i]->getCurrentMP()<al[i]->getMagicPower()){
-                al[i]->recoverCurrentMP(al[i]->getMagicPower()*0.4);
+                al[i]->recoverCurrentMP(al[i]->getMagicPower()*0.1);
             }
             cout << "It's " << al[i]->getName() << "'s turn.\n";
-            cout << "1.Cast a spell\n2.Attack.\n3.Use a potion.\n4.Swap gear.\n5.Display combat stats.\n";
+            cout << "1.Cast a spell\n2.Attack.\n3.Swap Gear/Use Potion.\n4.Display combat stats.\n";
             cout << "Select an action:";
             cin >> combatSelection;
             switch (combatSelection) {
@@ -431,8 +458,15 @@ void MobSpawner::fightEnemies(int number, Hero** al) {
                             cin >> targetSelection;
                             if (targetSelection > 0 and targetSelection <= enemiesNum){
                                 if (enemyTeam[targetSelection-1]->getCurrentHP()>0){
-                                    enemyTeam[targetSelection-1]->reduceCurrentHP(al[i]->cast());
-                                    break;
+                                    spellDamage = al[i]->cast();
+                                    if (spellDamage != -1){
+                                        enemyTeam[targetSelection-1]->reduceCurrentHP(spellDamage);
+                                        break;
+                                    }
+                                    else {
+                                        canCast = false;
+                                        break;
+                                    }
                                 }
                                 else {
                                     cout << "Character is already dead. Please try again.\n";
@@ -471,11 +505,28 @@ void MobSpawner::fightEnemies(int number, Hero** al) {
                     }
                     break;
                 case 3:
+                    while (true){
+                        cout << "Would you like to swap gear or use a potion?\n";
+                        cout << "1.Swap Weapon.\n2.Swap Armor.\n3.Use a Potion.\n4.Cancel Selection.\n";
+                        cout << "Input your selection:";
+                        cin >> menuSelection;
+                        if (menuSelection == 1){
+                            al[i]->swapWeapon();
+                        }
+                        else if (menuSelection == 2){
+                            al[i]->swapArmor();
+                        }
+                        else if (menuSelection == 3){
+                            cout << "Pot used.\n";
+                        }
+                        else {
+                            cout << "Option Cancelled.\n";
+                            break;
+                        }
+                    }
                     break;
                 case 4:
-                    break;
-                case 5:
-                    this->displayCombatStats(number,al);
+                    this->displayCombatStats(alliesNum, al);
                     i--;
                     break;
                 default:
@@ -491,6 +542,7 @@ void MobSpawner::fightEnemies(int number, Hero** al) {
         }
         if (allyWin){
             cout << "Victory!\n";
+            this->reward(enemiesNum,alliesNum,al);
             break;
         }
         for (i=0;i<enemiesNum;i++){
@@ -499,17 +551,39 @@ void MobSpawner::fightEnemies(int number, Hero** al) {
                 enemyTeam[i]->recoverCurrentHP(enemyTeam[i]->getHealthPower()*0.1);
             }
             cout << "Enemy attack.\n";
-            for (j=0; j < number; j++){
+            for (j=0; j < alliesNum; j++){
                 if (al[j]->getCurrentHP()<=0){enemyEval++;}
             }
-            if (enemyEval == number){
+            if (enemyEval == alliesNum){
                 enemyWin=true;
                 break;
             }
         }
         if (enemyWin){
             cout << "Defeat!\n";
+            this->penalty(alliesNum,al);
             break;
+        }
+    }
+}
+
+void MobSpawner::reward(int enemies, int allies, Hero** al){
+    int experience;
+    float parameter;
+    int gold;
+    for (int i=0;i<allies;i++){
+        gold = al[i]->getLevel()*enemies*10;
+        parameter = 1.0/float(al[i]->getLevel());
+        experience = parameter*enemies*50;
+        al[i]->setMoney(al[i]->getMoney()+gold);
+        al[i]->addExperience(experience);
+    }
+}
+
+void MobSpawner::penalty(int number, Hero** al){
+    for (int i=0;i<number;i++){
+        if (al[i]->getMoney()>0){
+            al[i]->setMoney(al[i]->getMoney()*0.5);
         }
     }
 }

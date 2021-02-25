@@ -18,7 +18,6 @@ public:
     char getIcon() const;
     int getX() const;
     int getY() const;
-    void displayPosition();
     ~PlayerPosition();
 };
 
@@ -54,6 +53,8 @@ public:
     void displayEnemies();
     void displayCombatStats(int,Hero**);
     void fightEnemies(int,Hero**);
+    void reward(int,int,Hero**);
+    void penalty(int,Hero**);
     void despawnEnemies();
     ~MobSpawner();
 };

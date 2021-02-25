@@ -28,7 +28,9 @@ int Spell::getManaReq() const {
 }
 
 int Spell::cast(int dex) {
-    int spellDamage = minDamage+(maxDamage-minDamage)*(dex/50);
+    float parameter;
+    parameter = (float)dex/50.0;
+    int spellDamage = minDamage+(maxDamage-minDamage)*parameter;
     return (spellDamage>=maxDamage?maxDamage:spellDamage);
 }
 

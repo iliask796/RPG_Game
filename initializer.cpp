@@ -14,6 +14,7 @@ vector<string> NameInitializerList::ArmorNames{"Boots of Swiftness","Angelic San
 vector<string> NameInitializerList::IceSpellNames{"Ice Lance","Ice Cone","Frostbite","Blizzard"};
 vector<string> NameInitializerList::FireSpellNames{"Fire Ball","Flame Strike","Inferno","Armageddon"};
 vector<string> NameInitializerList::LightningSpellNames{"Lightning Bolt","Lightning Field","Electric Shock","Thunderstorm"};
+vector<string> NameInitializerList::PotionNames={"Health Potion","Mana Potion","Strength Potion","Dexterity Potion","Agility Potion"};
 int NameInitializerList::random_element = 0;
 
 NameInitializerList::NameInitializerList() {
@@ -58,6 +59,11 @@ string NameInitializerList::generateFireSpellNames(int slot) {
 
 string NameInitializerList::generateLightningSpellNames(int slot) {
     return LightningSpellNames[slot-1];
+}
+
+string NameInitializerList::generatePotionName() {
+    random_element = rand()%PotionNames.size();
+    return PotionNames[random_element];
 }
 
 NameInitializerList::~NameInitializerList() {

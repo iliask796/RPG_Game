@@ -36,7 +36,7 @@ public:
     ~Armor();
 };
 
-enum PotionType {EXP,HEALING,MANA,ATTACK,DEFENSE};
+enum PotionType {HEAL,MANA,STRENGTH,DEXTERITY,AGILITY};
 
 class Potion: public Item{
 private:

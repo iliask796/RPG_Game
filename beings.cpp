@@ -79,6 +79,10 @@ int Hero::getCurrentMP() const {
     return currentMP;
 }
 
+void Hero::drainCurrentMP(int amount) {
+    currentMP -= amount;
+}
+
 void Hero::recoverCurrentMP(int recovery) {
     if (currentMP + recovery > magicPower){
         currentMP = magicPower;
@@ -90,6 +94,10 @@ void Hero::recoverCurrentMP(int recovery) {
 
 int Hero::getMoney() const {
     return money;
+}
+
+void Hero::setMoney(int gold){
+    money = gold;
 }
 
 void Hero::addMoneyFromItem(int position) {
@@ -112,7 +120,7 @@ int Hero::getExperience() const {
 
 void Hero::addExperience(int exp) {
     experience += exp;
-    if (experience >=100){
+    while (experience >=100){
         experience -= 100;
         this->levelUp();
     }
@@ -153,11 +161,22 @@ int Hero::cast(){
     while(true){
         cout << "Select a spell to cast.(Example: 1 for the first spell):";
         cin >> spellSelection;
-        if (spellSelection<=0 or spellSelection>spellbook->size()){
+        if (spellSelection == -1){
+            cout << "Option cancelled. You chose to attack instead.\n";
+            return -1;
+        }
+        else if (spellSelection<=0 or spellSelection>spellbook->size()){
             cout << "Invalid option. Please try again.\n";
         }
         else {
-            return spellbook->at(spellSelection-1)->cast(dexterity);
+            if (this->getCurrentMP() >= spellbook->at(spellSelection-1)->getManaReq()){
+                this->drainCurrentMP(spellbook->at(spellSelection-1)->getManaReq());
+                return spellbook->at(spellSelection-1)->cast(dexterity);
+            }
+            else{
+                cout << "Not enough mana to cast this spell. Please choose again.\n";
+                cout << "You can input -1 to cancel and attack instead. \n";
+            }
         }
     }
 }
@@ -248,7 +267,8 @@ void Hero::removeArmor() {
 }
 
 void Hero::swapWeapon() {
-    cout<<"Select a Weapon from your Inventory to Equip.(Example: Type 1 to equip the first item or -1 to Cancel.)\n";
+    cout<<"Select a Weapon from your Inventory to Equip.\n";
+    cout<<"(Example: Type 1 to equip the first item or -1 to Cancel.)\n";
     printInventory();
     int selection;
     string s1;
@@ -267,7 +287,9 @@ void Hero::swapWeapon() {
         s1 = typeid(*(inventory->at(selection-1))).name();
         s2 = "Weapon";
         if (s1.find(s2) != std::string::npos){
-            removeWeapon();
+            if (gear[0]!=NULL){
+                removeWeapon();
+            }
             equipWeapon((inventory->at(selection-1)));
             this->removeFromInventory(selection-1);
             cout<<"Successfully swapped gear.\n";
@@ -297,7 +319,9 @@ void Hero::swapArmor(){
         s1 = typeid(*(inventory->at(selection-1))).name();
         s2 = "Armor";
         if (s1.find(s2) != std::string::npos){
-            removeArmor();
+            if (gear[1]!=NULL){
+                removeArmor();
+            }
             equipArmor((inventory->at(selection - 1)));
             this->removeFromInventory(selection-1);
             cout<<"Successfully swapped gear.\n";
@@ -373,6 +397,7 @@ Warrior::Warrior(const char * nam, const int hp, const int mp, const int str, co
 
 }
 
+//TODO: stats at level up
 void Warrior::levelUp() {
     int new_level = this->getLevel() + 1;
     setLevel(new_level);

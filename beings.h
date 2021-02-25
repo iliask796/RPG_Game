@@ -40,8 +40,10 @@ public:
     Hero(const char*, const int, const int, const int, const int, const int, const int=1000);
     int getMagicPower() const;
     int getCurrentMP() const;
+    void drainCurrentMP(int);
     void recoverCurrentMP(int);
     int getMoney() const;
+    void setMoney(int);
     void addMoneyFromItem(int);
     void addMoneyFromSpell(int);
     void removeMoney(int);
