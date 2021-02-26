@@ -6,10 +6,18 @@ int main() {
     int playerSelection;
     Hero** allyTeam;
     cout << "Hello traveler! An epic adventure awaits!\n";
-    cout << "Do you have allies? How many heroes are entering the dungeon? (Available:1-3)\n";
-    cout << "Insert selection:";
-    cin >> playerSelection;
-    cout << "----------------------------------\n";
+    while(true){
+        cout << "Do you have allies? How many heroes are entering the dungeon? (Available:1-3)\n";
+        cout << "Insert selection:";
+        cin >> playerSelection;
+        cout << "----------------------------------\n";
+        if (playerSelection >=1 and playerSelection <=3){
+            break;
+        }
+        else{
+            cout << "Invalid input.\n";
+        }
+    }
     switch (playerSelection) {
         case 1:
             cout << "So you are entering alone. How brave of you!\n";
