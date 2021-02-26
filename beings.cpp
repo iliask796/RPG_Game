@@ -56,6 +56,87 @@ Living::~Living() {
     delete[] name;
 }
 
+Monster::Monster(const char * nam, const int hp, const int dmg, const int def, const int de) : Living(nam,hp){
+    damage = dmg;
+    defense = def;
+    dodge = de;
+    curseStatus = false;
+    weakenLevel = 0;
+    vulnerableLevel = 0;
+    hexLevel = 0;
+    interval = 0;
+}
+
+int Monster::attack() {
+    return damage;
+}
+
+int Monster::getDefense() const {
+    return defense;
+}
+
+int Monster::getDodge() const {
+    return dodge;
+}
+
+void Monster::debuff(SpellType deb, int level) {
+    int curseLevel = 1 + level/4;
+    if (curseStatus == false){
+        interval+=2;
+    }
+    else {
+        interval++;
+    }
+    curseStatus = true;
+    if (deb == Weaken){
+        weakenLevel += curseLevel;
+        damage -= curseLevel*3;
+    }
+    else if (deb == Vulnerable){
+        vulnerableLevel += curseLevel;
+        defense -= curseLevel*2;
+    }
+    else if (deb == Hex){
+        hexLevel += curseLevel;
+        dodge -= curseLevel*2;
+    }
+}
+
+bool Monster::isCursed() {
+    return curseStatus;
+}
+
+void Monster::cure() {
+    interval--;
+    if (interval==0){
+        if (weakenLevel>0){
+            damage += weakenLevel*3;
+            weakenLevel = 0;
+        }
+        if (vulnerableLevel>0){
+            defense += vulnerableLevel*2;
+            vulnerableLevel = 0;
+        }
+        if (hexLevel>0){
+            dodge += hexLevel*2;
+            hexLevel = 0;
+        }
+        curseStatus = false;
+    }
+}
+
+void Monster::adjustStats(int amplifier){
+    this->setLevel(amplifier);
+    this->setHealthPower(this->getHealthPower()*this->getLevel()*0.5);
+    this->setCurrentHP(getHealthPower());
+    damage *= amplifier*0.75;
+    defense *= amplifier*0.5;
+}
+
+Monster::~Monster() {
+
+}
+
 Hero::Hero(const char * nam, const int hp, const int mp, const int str, const int dex, const int agi, const int gold) : Living(nam,hp){
     magicPower = mp;
     currentMP = mp;
@@ -139,7 +220,7 @@ void Hero::addAgility(int agi) {
 }
 
 void Hero::displayStats() {
-    cout<<"Displaying stats for Hero: "<<this->getName()<<".\nLevel = "<<this->getLevel()<<", HP = "<<this->getHealthPower()<<", MP = "<<this->getMagicPower()<<", Gold = "<<this->getMoney()<<", EXP = "<<this->getExperience()<<endl;
+    cout<<"Displaying stats for Hero: "<<this->getName()<<".\nLevel = "<<this->getLevel()<<", HP = "<<this->getCurrentHP()<<", MP = "<<this->getCurrentMP()<<", Gold = "<<this->getMoney()<<", EXP = "<<this->getExperience()<<endl;
 }
 
 int Hero::attack() {
@@ -151,16 +232,26 @@ int Hero::attack() {
     }
 }
 
+int Hero::defend() {
+    if (gear[1]==NULL){
+        return 0;
+    }
+    else {
+        return gear[1]->use();
+    }
+}
+
 bool Hero::hasSpells() {
     return (spellbook->size()==0?false:true);
 }
 
-int Hero::cast(){
+int Hero::cast(Monster* enemy){
     this->printSpellbook();
     int spellSelection;
     while(true){
         cout << "Select a spell to cast.(Example: 1 for the first spell):";
         cin >> spellSelection;
+        cout << "----------------------------------\n";
         if (spellSelection == -1){
             cout << "Option cancelled. You chose to attack instead.\n";
             return -1;
@@ -171,6 +262,7 @@ int Hero::cast(){
         else {
             if (this->getCurrentMP() >= spellbook->at(spellSelection-1)->getManaReq()){
                 this->drainCurrentMP(spellbook->at(spellSelection-1)->getManaReq());
+                enemy->debuff((spellbook->at(spellSelection-1))->debuff(),spellbook->at(spellSelection-1)->getLevelReq());
                 return spellbook->at(spellSelection-1)->cast(dexterity);
             }
             else{
@@ -179,10 +271,6 @@ int Hero::cast(){
             }
         }
     }
-}
-
-int Hero::getDexterity() {
-    return dexterity;
 }
 
 int Hero::getAgility() {
@@ -276,6 +364,7 @@ void Hero::swapWeapon() {
     while(true){
         cout<<"Type your selection:";
         cin >> selection;
+        cout << "----------------------------------\n";
         if (selection==-1){
             cout<<"Option Cancelled.\n";
             break;
@@ -309,6 +398,7 @@ void Hero::swapArmor(){
     while(true){
         cout<<"Type your selection:";
         cin >> selection;
+        cout << "----------------------------------\n";
         if (selection==-1){
             cout<<"Option Cancelled.\n";
             break;
@@ -343,6 +433,7 @@ void Hero::usePotion() {
     while(true){
         cout<<"Type your selection:";
         cin >> selection;
+        cout << "----------------------------------\n";
         if (selection==-1){
             cout<<"Option Cancelled.\n";
             break;
@@ -414,44 +505,16 @@ Hero::~Hero() {
     delete[] gear;
 }
 
-Monster::Monster(const char * nam, const int hp, const int dmg, const int def, const int de) : Living(nam,hp){
-    damage = dmg;
-    defense = def;
-    dodge = de;
-}
-
-int Monster::attack() {
-    return damage;
-}
-
-int Monster::getDefense() const {
-    return defense;
-}
-
-int Monster::getDodge() const {
-    return dodge;
-}
-
-void Monster::adjustStats(int amplifier){
-    this->setLevel(amplifier);
-    this->setHealthPower(this->getHealthPower()*this->getLevel()*0.5);
-    this->setCurrentHP(getHealthPower());
-    damage *= amplifier;
-    defense *= amplifier;
-}
-
-Monster::~Monster() {
-
-}
-
 Warrior::Warrior(const char * nam, const int hp, const int mp, const int str, const int dex, const int agi) : Hero(nam,hp,mp,str,dex,agi) {
 
 }
 
-//TODO: stats at level up
 void Warrior::levelUp() {
     int new_level = this->getLevel() + 1;
     setLevel(new_level);
+    this->addStrength(5);
+    this->addDexterity(2);
+    this->addAgility(3);
 }
 
 Warrior::~Warrior() {
@@ -466,6 +529,9 @@ Sorcerer::Sorcerer(const char * nam, const int hp, const int mp, const int str, 
 void Sorcerer::levelUp() {
     int new_level = this->getLevel() + 1;
     setLevel(new_level);
+    this->addStrength(3);
+    this->addDexterity(4);
+    this->addAgility(3);
 }
 
 Sorcerer::~Sorcerer() {
@@ -479,6 +545,9 @@ Paladin::Paladin(const char * nam, const int hp, const int mp, const int str, co
 void Paladin::levelUp() {
     int new_level = this->getLevel() + 1;
     setLevel(new_level);
+    this->addStrength(4);
+    this->addDexterity(3);
+    this->addAgility(2);
 }
 
 Paladin::~Paladin() {

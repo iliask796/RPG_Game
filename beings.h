@@ -24,6 +24,28 @@ public:
     ~Living();
 };
 
+class Monster : public Living{
+private:
+    int damage;
+    int defense;
+    int dodge;
+    bool curseStatus;
+    int weakenLevel;
+    int vulnerableLevel;
+    int hexLevel;
+    int interval;
+public:
+    Monster(const char*, const int, const int, const int, const int);
+    int attack();
+    int getDefense() const;
+    int getDodge() const;
+    void debuff(SpellType,int);
+    bool isCursed();
+    void cure();
+    void adjustStats(int);
+    ~Monster();
+};
+
 class Hero : public Living{
 private:
     int magicPower;
@@ -54,9 +76,9 @@ public:
     void addAgility(int);
     void displayStats();
     int attack();
+    int defend();
     bool hasSpells();
-    int cast();
-    int getDexterity();
+    int cast(Monster*);
     int getAgility();
     int getInventorySize() const;
     int getSpellbookSize() const;
@@ -79,56 +101,41 @@ public:
     ~Hero();
 };
 
-class Monster : public Living{
-private:
-    int damage;
-    int defense;
-    int dodge;
-public:
-    Monster(const char*, const int, const int, const int, const int);
-    int attack();
-    int getDefense() const;
-    int getDodge() const;
-    void adjustStats(int);
-    ~Monster();
-};
-
-//TODO: Stat Balance
 class Warrior : public Hero{
 public:
-    Warrior(const char*, const int = 450, const int = 70, const int = 13, const int = 4, const int = 8);
+    Warrior(const char*, const int = 450, const int = 70, const int = 13, const int = 5, const int = 15);
     void levelUp();
     ~Warrior();
 };
 
 class Sorcerer : public Hero{
 public:
-    Sorcerer(const char*, const int = 400, const int = 110, const int = 5, const int = 13, const int = 7);
+    Sorcerer(const char*, const int = 400, const int = 110, const int = 7, const int = 13, const int = 15);
     void levelUp();
     ~Sorcerer();
 };
 
 class Paladin : public Hero{
 public:
-    Paladin(const char*, const int = 500, const int = 90, const int = 7, const int = 7, const int = 11);
+    Paladin(const char*, const int = 500, const int = 90, const int = 9, const int = 9, const int = 10);
     void levelUp();
     ~Paladin();
 };
 
 class Dragon : public Monster{
 public:
-    Dragon(const char*, const int = 20, const int = 20, const int = 8, const int = 50);
+    Dragon(const char*, const int = 20, const int = 20, const int = 4, const int = 20);
     ~Dragon();
 };
 
 class Exoskeleton : public Monster{
 public:
-    Exoskeleton(const char*, const int = 13, const int = 8, const int = 20, const int = 60);
+    Exoskeleton(const char*, const int = 13, const int = 8, const int = 7, const int = 30);
     ~Exoskeleton();
 };
 
 class Spirit : public Monster{
 public:
-    Spirit(const char*, const int = 7, const int = 13, const int = 13, const int = 85);
+    Spirit(const char*, const int = 7, const int = 13, const int = 5, const int = 50);
     ~Spirit();
 };

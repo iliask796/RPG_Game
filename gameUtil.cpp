@@ -11,6 +11,7 @@ Hero* heroSelection(){
     cout << "Select a role for your hero. (Available: WARRIOR,SORCERER,PALADIN)\n";
     cout << "Make your selection:";
     cin >> role;
+    cout << "----------------------------------\n";
     Hero* h;
     while(true){
         if (role == "WARRIOR"){
@@ -28,6 +29,7 @@ Hero* heroSelection(){
         else{
             cout << "Please check your spelling and try again:";
             cin >> role;
+            cout << "----------------------------------\n";
         }
     }
     return h;
@@ -39,6 +41,7 @@ string nameSelection(){
     cout << "Would you like to select your own name? (YES/NO)\n";
     cout << "Insert selection:";
     cin >> choice;
+    cout << "----------------------------------\n";
     if (choice == "YES"){
         cout << "Insert your name:";
         cin.ignore();
@@ -192,6 +195,7 @@ void Marketplace::buyItem(Hero* h1) {
     cout << "Type your number of selection or -1 to cancel:";
     int selection;
     cin >> selection;
+    cout << "----------------------------------\n";
     if (selection == -1){
         return;
     }
@@ -216,6 +220,7 @@ void Marketplace::sellItem(Hero* h1) {
     h1->printInventory();
     cout << "Make your selection (Example: Input 1 to sell the first item or -1 to cancel) :";
     cin >> selection;
+    cout << "----------------------------------\n";
     if (selection == -1){
         return;
     }
@@ -234,6 +239,7 @@ void Marketplace::buySpell(Hero* h1) {
     cout << "Type your number of selection or -1 to cancel:";
     int selection;
     cin >> selection;
+    cout << "----------------------------------\n";
     if (selection == -1){
         return;
     }
@@ -253,6 +259,7 @@ void Marketplace::sellSpell(Hero* h1) {
     h1->printSpellbook();
     cout << "Make your selection (Example: Input 1 to sell the first spell or -1 to cancel) :";
     cin >> selection;
+    cout << "----------------------------------\n";
     if (selection == -1){
         return;
     }
@@ -276,11 +283,13 @@ void Marketplace::operate(int number, Hero** al) {
         cout<<"1. Buy something.\n2. Sell something.\n3. Leave the shop.\n";
         cout<<"Make your selection by typing the corresponding number:";
         cin >> optionSelection;
+        cout << "----------------------------------\n";
         switch (optionSelection) {
             case 1:
                 cout << "1. Buy an item.\n2. Buy a spell.\n";
                 cout << "Make your selection by typing the corresponding number:";
                 cin >> typeSelection;
+                cout << "----------------------------------\n";
                 if (typeSelection!=1 and typeSelection!=2){
                     cout << "Wrong selection. Please try again.\n";
                     break;
@@ -297,6 +306,7 @@ void Marketplace::operate(int number, Hero** al) {
                     cout << "]\n";
                     cout << "Select a hero by its number to initiate a transaction:";
                     cin >> heroSelection;
+                    cout << "----------------------------------\n";
                     if (heroSelection <= number and heroSelection >= 1){
                         if (typeSelection == 1){this->buyItem(al[heroSelection-1]);}
                         else {this->buySpell(al[heroSelection-1]);}
@@ -311,6 +321,7 @@ void Marketplace::operate(int number, Hero** al) {
                 cout << "1. Sell an item.\n2. Sell a spell.\n";
                 cout << "Make your selection by typing the corresponding number:";
                 cin >> typeSelection;
+                cout << "----------------------------------\n";
                 if (typeSelection!=1 and typeSelection!=2){
                     cout << "Wrong selection. Please try again.\n";
                     break;
@@ -323,6 +334,7 @@ void Marketplace::operate(int number, Hero** al) {
                     cout << "Your team consists of " << number << " Heroes.\n";
                     cout << "Select a hero by its number to initiate a transaction:";
                     cin >> heroSelection;
+                    cout << "----------------------------------\n";
                     if (heroSelection <= number and heroSelection >= 1){
                         if (typeSelection == 1) {this->sellItem(al[heroSelection-1]);}
                         else {this->sellSpell(al[heroSelection-1]);}
@@ -422,7 +434,6 @@ void MobSpawner::displayCombatStats(int number, Hero** al){
     }
 }
 
-//TODO: battle (enemy,defence,agility)
 void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
     bool allyWin = false;
     bool enemyWin = false;
@@ -432,14 +443,21 @@ void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
     int j;
     int combatSelection;
     int targetSelection;
+    int targetedAlly;
     int menuSelection;
+    int attackDamage;
     int spellDamage;
+    int dodgeValue;
     bool canCast;
     while (true){
+        dodgeValue = rand()%100+1;
         for (i=0; i < alliesNum; i++){
             allyEval = 0;
+            if (al[i]->getCurrentHP()<=0){
+                continue;
+            }
             if (al[i]->getCurrentHP()<al[i]->getHealthPower() and al[i]->getCurrentHP()>0){
-                al[i]->recoverCurrentHP(al[i]->getHealthPower()*0.1);
+                al[i]->recoverCurrentHP(al[i]->getHealthPower()*0.02);
             }
             if (al[i]->getCurrentMP()<al[i]->getMagicPower()){
                 al[i]->recoverCurrentMP(al[i]->getMagicPower()*0.1);
@@ -448,6 +466,7 @@ void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
             cout << "1.Cast a spell\n2.Attack.\n3.Swap Gear/Use Potion.\n4.Display combat stats.\n";
             cout << "Select an action:";
             cin >> combatSelection;
+            cout << "----------------------------------\n";
             switch (combatSelection) {
                 case 1:
                     canCast=true;
@@ -456,9 +475,10 @@ void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
                             this->displayEnemies();
                             cout << "Select an enemy target.(Example: 1 for first enemy.):";
                             cin >> targetSelection;
+                            cout << "----------------------------------\n";
                             if (targetSelection > 0 and targetSelection <= enemiesNum){
                                 if (enemyTeam[targetSelection-1]->getCurrentHP()>0){
-                                    spellDamage = al[i]->cast();
+                                    spellDamage = al[i]->cast(enemyTeam[targetSelection-1]);
                                     if (spellDamage != -1){
                                         enemyTeam[targetSelection-1]->reduceCurrentHP(spellDamage);
                                         break;
@@ -490,9 +510,18 @@ void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
                         this->displayEnemies();
                         cout << "Select an enemy target.(Example: 1 for first enemy.):";
                         cin >> targetSelection;
+                        cout << "----------------------------------\n";
                         if (targetSelection > 0 and targetSelection <= enemiesNum){
                             if (enemyTeam[targetSelection-1]->getCurrentHP()>0){
-                                enemyTeam[targetSelection-1]->reduceCurrentHP(al[i]->attack());
+                                if (enemyTeam[targetSelection-1]->getDodge()>=dodgeValue){
+                                    cout << "Your enemy dodged your attack.\n";
+                                }
+                                else{
+                                    attackDamage = al[i]->attack() - enemyTeam[targetSelection-1]->getDefense();
+                                    if (attackDamage > 0){
+                                        enemyTeam[targetSelection-1]->reduceCurrentHP(attackDamage);
+                                    }
+                                }
                                 break;
                             }
                             else {
@@ -510,6 +539,7 @@ void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
                         cout << "1.Swap Weapon.\n2.Swap Armor.\n3.Use a Potion.\n4.Cancel Selection.\n";
                         cout << "Input your selection:";
                         cin >> menuSelection;
+                        cout << "----------------------------------\n";
                         if (menuSelection == 1){
                             al[i]->swapWeapon();
                         }
@@ -543,14 +573,40 @@ void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
         if (allyWin){
             cout << "Victory!\n";
             this->reward(enemiesNum,alliesNum,al);
+            for (i=0;i<alliesNum;i++){
+                if (al[i]->getCurrentHP()<=0){
+                    al[i]->setCurrentHP(al[i]->getHealthPower()*0.5);
+                }
+            }
             break;
         }
         for (i=0;i<enemiesNum;i++){
             enemyEval = 0;
+            if (enemyTeam[i]->isCursed()){
+                enemyTeam[i]->cure();
+            }
+            if (enemyTeam[i]->getCurrentHP()<=0){
+                continue;
+            }
             if (enemyTeam[i]->getCurrentHP()<enemyTeam[i]->getHealthPower() and enemyTeam[i]->getCurrentHP()>0){
                 enemyTeam[i]->recoverCurrentHP(enemyTeam[i]->getHealthPower()*0.1);
             }
-            cout << "Enemy attack.\n";
+            while(true){
+                targetedAlly = rand()%alliesNum;
+                if (al[targetedAlly]->getCurrentHP()>0){
+                    if (al[targetedAlly]->getAgility()<=dodgeValue){
+                        attackDamage = enemyTeam[i]->attack() - al[targetedAlly]->defend();
+                        if (attackDamage>0){
+                            al[targetedAlly]->reduceCurrentHP(attackDamage);
+                            cout << enemyTeam[i]->getName() << " attacked " << al[targetedAlly]->getName() << " for " << attackDamage << " damage.\n";
+                            break;
+                        }
+                    }
+                    else{
+                        break;
+                    }
+                }
+            }
             for (j=0; j < alliesNum; j++){
                 if (al[j]->getCurrentHP()<=0){enemyEval++;}
             }
@@ -562,6 +618,11 @@ void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
         if (enemyWin){
             cout << "Defeat!\n";
             this->penalty(alliesNum,al);
+            for (i=0;i<alliesNum;i++){
+                if (al[i]->getCurrentHP()<=0){
+                    al[i]->setCurrentHP(al[i]->getHealthPower()*0.5);
+                }
+            }
             break;
         }
     }
@@ -686,6 +747,7 @@ void gameMap::playerMove() {
     cout << "Define movement by typing the corresponding number:";
     int direction;
     cin >> direction;
+    cout << "----------------------------------\n";
     switch (direction) {
         case 1:
             player->goUp();

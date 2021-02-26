@@ -9,6 +9,7 @@ int main() {
     cout << "Do you have allies? How many heroes are entering the dungeon? (Available:1-3)\n";
     cout << "Insert selection:";
     cin >> playerSelection;
+    cout << "----------------------------------\n";
     switch (playerSelection) {
         case 1:
             cout << "So you are entering alone. How brave of you!\n";
@@ -41,6 +42,7 @@ int main() {
         cout << "Options: 1)Inspect characters. 2)Display Map. 3)Move a square. 4)Check equipment. 5)Quit game.\n";
         cout << "Make your selection:";
         cin >> selection;
+        cout << "----------------------------------\n";
         switch (selection) {
             case 1:
                 map->displayHeroStats();
@@ -57,13 +59,20 @@ int main() {
                 cout << "1.Swap Weapon.\n2.Swap Armor.\n3.Use a Potion.\n4.Cancel Selection.\n";
                 cout << "Input your selection:";
                 cin >> selection;
+                cout << "----------------------------------\n";
                 if (selection<=3 and selection >=1){
                     if (playerSelection == 1){
                         charSelection = 1;
                     }
                     else {
+                        cout << "Your team consists of " << playerSelection << " Heroes.\n[";
+                        for (int i=0;i<playerSelection;i++){
+                            cout << i+1 << "." << allyTeam[i]->getName() << ", ";
+                        }
+                        cout << "]\n";
                         cout << "Select a hero by its number to initiate the action:";
                         cin >> charSelection;
+                        cout << "----------------------------------\n";
                     }
                     if (charSelection <= playerSelection){
                         if (selection == 1){
