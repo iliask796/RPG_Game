@@ -41,7 +41,6 @@ int main() {
         cout << "Options: 1)Inspect characters. 2)Display Map. 3)Move a square. 4)Check equipment. 5)Quit game.\n";
         cout << "Make your selection:";
         cin >> selection;
-        //TODO: use pot
         switch (selection) {
             case 1:
                 map->displayHeroStats();
@@ -74,7 +73,7 @@ int main() {
                             allyTeam[charSelection - 1]->swapArmor();
                         }
                         else if (selection == 3){
-                            cout << "Pot used.\n";
+                            allyTeam[charSelection - 1]->usePotion();
                         }
                         else {
                             cout << "Option Cancelled.\n";

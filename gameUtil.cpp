@@ -422,7 +422,7 @@ void MobSpawner::displayCombatStats(int number, Hero** al){
     }
 }
 
-//TODO: battle (enemy,pot,defense,agility)
+//TODO: battle (enemy,defence,agility)
 void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
     bool allyWin = false;
     bool enemyWin = false;
@@ -517,7 +517,7 @@ void MobSpawner::fightEnemies(int alliesNum, Hero** al) {
                             al[i]->swapArmor();
                         }
                         else if (menuSelection == 3){
-                            cout << "Pot used.\n";
+                            al[i]->usePotion();
                         }
                         else {
                             cout << "Option Cancelled.\n";

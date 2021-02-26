@@ -300,7 +300,8 @@ void Hero::swapWeapon() {
 }
 
 void Hero::swapArmor(){
-    cout<<"Select an Armor from your Inventory to Equip.(Example: Type 1 to equip the first item.)\n";
+    cout<<"Select an Armor from your Inventory to Equip.\n";
+    cout<<"(Example: Type 1 to equip the first item or -1 to Cancel.)\n";
     printInventory();
     int selection;
     string s1;
@@ -328,6 +329,56 @@ void Hero::swapArmor(){
             break;
         }
         else{cout<<"Your selected item is not an Armor. Please try again or cancel.\n";}
+    }
+}
+
+void Hero::usePotion() {
+    cout<<"Select a Potion from your Inventory to Use.\n";
+    cout<<"(Example:Type 1 to use the first item or -1 to Cancel.)\n";
+    printInventory();
+    int selection;
+    string s1;
+    string s2;
+    Potion* p;
+    while(true){
+        cout<<"Type your selection:";
+        cin >> selection;
+        if (selection==-1){
+            cout<<"Option Cancelled.\n";
+            break;
+        }
+        else if (selection > inventory->size() or selection <=0){
+            cout<<"Your option is not valid, because it is out of inventory size bounds. Please try again.\n";
+            continue;
+        }
+        s1 = typeid(*(inventory->at(selection-1))).name();
+        s2 = "Potion";
+        if (s1.find(s2) != std::string::npos){
+            p = dynamic_cast<Potion *>(inventory->at(selection - 1));
+            if (p->isUsable()){
+                if (p->getType() == HEAL){
+                    this->recoverCurrentHP(p->use());
+                }
+                else if (p->getType() == MANA){
+                    this->recoverCurrentMP(p->use());
+                }
+                else if (p->getType() == STRENGTH){
+                    this->addStrength(p->use());
+                }
+                else if (p->getType() == DEXTERITY){
+                    this->addDexterity(p->use());
+                }
+                else if (p->getType() == AGILITY){
+                    this->addAgility(p->use());
+                }
+                cout << "Successfully used a potion.\n";
+            }
+            else {
+                cout << "There was no effect. Potion has been used already.\n";
+            }
+            break;
+        }
+        else{cout<<"Your selected item is not a Potion. Please try again or cancel.\n";}
     }
 }
 

@@ -29,10 +29,6 @@ Weapon::Weapon(const char* nam,const int val, const int req,const int dmg, HandT
     type = typ;
 }
 
-HandType Weapon::getType() const {
-    return type;
-}
-
 int Weapon::use() {
     return damage;
 }
@@ -63,7 +59,12 @@ PotionType Potion::getType() const {
     return type;
 }
 
+bool Potion::isUsable() {
+    return available;
+}
+
 int Potion::use() {
+    available = false;
     return stat;
 }
 

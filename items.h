@@ -22,7 +22,6 @@ private:
     HandType type;
 public:
     Weapon(const char*,const int, const int,const int, HandType);
-    HandType getType() const;
     int use(); //Active Use
     ~Weapon();
 };
@@ -46,6 +45,7 @@ private:
 public:
     Potion(const char*,const int, const int, PotionType, const int);
     PotionType getType() const;
+    bool isUsable();
     int use(); //Active Use
     ~Potion();
 };

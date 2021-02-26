@@ -73,6 +73,7 @@ public:
     void removeArmor();
     void swapWeapon();
     void swapArmor();
+    void usePotion();
     void printGear();
     virtual void levelUp() =0;
     ~Hero();
@@ -92,6 +93,7 @@ public:
     ~Monster();
 };
 
+//TODO: Stat Balance
 class Warrior : public Hero{
 public:
     Warrior(const char*, const int = 450, const int = 70, const int = 13, const int = 4, const int = 8);
